@@ -1,12 +1,25 @@
 #!/bin/bash
-# Old installscript
+# Installer script v0.1. Intended for Debian ARM-based SoC-distribution and GIRL v9.5.0. http://girl.software
+# Check if Synaptic packagemanager is installed.
+set -e
+if ! hash apt-get 2>/dev/null; then
+        echo "Sorry. This script requires a distribution with Synaptic package manager (Debian distributions)."
+        exit 1
+fi
+# Check if script is ran in root context.
+if [ "$(id -u)" -ne "0" ]; then
+        echo "This script requires root."
+        exit 1
+fi
+# Update repositories.
+sudo apt-get -y update
 # sudo apt-get install mate-desktop-environment-extras
 # Install packages without dialogs
-sudo apt-get install --no-install-recommends mate-desktop-environment mate-desktop-environment-extra mate-archive-keyring caja-gksu caja-sendto mate-indicator-applet mate-media-gstreamer mate-icon-theme-faenza
+sudo apt-get -y install --no-install-recommends mate-desktop-environment-extras mate-archive-keyring caja-gksu caja-sendto mate-indicator-applet mate-media-gstreamer mate-icon-theme-faenza
 # Remove substituted packages
-sudo apt-get remove gcalctool gnome-screenshot gedit file-roller eog gnome-system-monitor gnome-system-log baobab gnome-terminal gnome-applets gnome-media gnome-power-manager gnome-screensaver
-# Set default desktop for new users
-sudo /usr/lib/lightdm/lightdm-set-defaults -s mate
+sudo apt-get -y remove gcalctool gnome-screenshot gedit file-roller eog gnome-system-monitor gnome-system-log baobab gnome-terminal gnome-applets gnome-media gnome-power-manager gnome-screensaver
+# Set default desktop for new users (fails)
+# sudo /usr/lib/lightdm/lightdm-set-defaults -s mate
 # Change MIME types
 # Folders:
 xdg-mime default caja-folder-handler.desktop inode/directory
@@ -35,5 +48,5 @@ xdg-mime default pluma.desktop application/x-wine-extension-inf
 # PDF:
 xdg-mime default atril.desktop application/pdf
 # Change default terminal emulator appli
-update-alternatives --install "$(which x-terminal-emulator)" x-terminal-emulator "$(which mate-terminal)" 30
-update-alternatives --set x-terminal-emulator "$(which mate-terminal)"
+sudo update-alternatives --install "$(which x-terminal-emulator)" x-terminal-emulator "$(which mate-terminal)" 30
+sudo update-alternatives --set x-terminal-emulator "$(which mate-terminal)"
